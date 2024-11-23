@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
 class DetalhesFase {
@@ -32,13 +33,16 @@ List<DetalhesFase> getEsp() {
 class ControleRobo with ChangeNotifier {
   List<BluetoothService> services = [];
   BluetoothCharacteristic? characteristic;
+  bool scanDisconect = false;
   late BluetoothDevice robo1 = BluetoothDevice.fromId("E4:65:B8:DA:22:FA");
 
   final BluetoothAdapterState _adapterState = BluetoothAdapterState.unknown;
   late StreamSubscription<BluetoothAdapterState> _adapterStateSubscription;
 
   Future writeText(String text) async {
-    await characteristic?.write(text.codeUnits);
+      await characteristic?.write(text.codeUnits);
+
+
     print("Data enviado ${text.codeUnits}");
   }
 
@@ -67,7 +71,11 @@ class ControleRobo with ChangeNotifier {
   Future<void> connectBluetooth() async {
     await robo1.connect().whenComplete(() {
       print("Conectado");
+      scanDisconect = true;
+
     });
     await getServices();
+
+
   }
 }

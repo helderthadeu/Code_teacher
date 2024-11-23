@@ -61,7 +61,11 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             ElevatedButton(
               onPressed: () {
-                controleRobo.connectBluetooth();
+                controleRobo.connectBluetooth().whenComplete((){
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Dispositivo conectado com sucesso!')),
+                  );
+                });
                   Future.delayed(const Duration(milliseconds: 500)).whenComplete((){
                     setState(() {
 

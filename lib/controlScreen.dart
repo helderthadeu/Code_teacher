@@ -23,8 +23,9 @@ class _ControlPageState extends State<ControlPage> {
   }
 
   final int tamCode = 24;
-  List<Mnemonico> code =
-      List<Mnemonico>.filled(24, Mnemonico("nada", "nada"), growable: true);
+  List<Mnemonico> code = List<Mnemonico>.generate(
+      24, (index) => Mnemonico("nada", "nada"),
+      growable: true);
 
   @override
   void initState() {
@@ -50,8 +51,6 @@ class _ControlPageState extends State<ControlPage> {
               );
             },
             onWillAcceptWithDetails: (DragTargetDetails<Widget> details) {
-              print("SERA");
-
               return true;
               // String temp = details.data.key
               //     .toString()
@@ -88,7 +87,6 @@ class _ControlPageState extends State<ControlPage> {
             textAlign: TextAlign.center,
           ),
           centerTitle: true,
-          // bottom:
         ),
         body: SingleChildScrollView(
             child: Padding(
@@ -130,12 +128,13 @@ class _ControlPageState extends State<ControlPage> {
                               if ((temp == "xUm" ||
                                       temp == "xDois" ||
                                       temp == "xTres") &&
-                                  code[index] == "nada") {
+                                  code[index].getComando() == "nada") {
                                 return false;
                               } else {
                                 if (index == 0) {
                                   return true;
-                                } else if (code[index - 1] != "nada") {
+                                } else if (code[index - 1].getComando() !=
+                                    "nada") {
                                   return true;
                                 } else {
                                   return false;
@@ -149,10 +148,11 @@ class _ControlPageState extends State<ControlPage> {
                                   .toString()
                                   .replaceAll("[<'", "")
                                   .replaceAll("'>]", "");
-                              if (temp == "xUm" ||
+                              if ((temp == "xUm" ||
                                   temp == "xDois" ||
-                                  temp == "xTres") {
+                                  temp == "xTres")) {
                                 // _subDraggeds[index] = details.data;
+                                code.elementAt(index).setMultiplicador(temp);
                                 _subDraggeds[index] = DragTarget(
                                   builder:
                                       (context, candidateData, rejectedData) {
@@ -163,40 +163,19 @@ class _ControlPageState extends State<ControlPage> {
                                   },
                                   onWillAcceptWithDetails:
                                       (DragTargetDetails<Widget> details) {
-                                    print("SERA");
                                     print(details.data);
                                     return true;
-                                    // String temp = details.data.key
-                                    //     .toString()
-                                    //     .toString()
-                                    //     .replaceAll("[<'", "")
-                                    //     .replaceAll("'>]", "");
-                                    //
-                                    // if (temp == "xUm" || temp == "xDois" || temp == "xTres") {
-                                    //   return true;
-                                    // } else {
-                                    //   return false;
-                                    // }
                                   },
                                   onAcceptWithDetails:
-                                      (DragTargetDetails<Widget> teste) {
-                                    // Widget interno =
-                                    // buildContainer(Colors.black12, Icons.add, "Teste");
-                                    print(details.data.key);
-
-                                    // interno = details.data;
-                                  },
+                                      (DragTargetDetails<Widget> teste) {},
                                 );
-                                code[index].setMultiplicador(temp);
                               } else {
                                 _draggedContainers[index] = details.data;
                               }
-                              code[index].setComando(details.data.key
+                              code.elementAt(index).setComando(details.data.key
                                   .toString()
                                   .replaceAll("[<'", "")
                                   .replaceAll("'>]", ""));
-
-                              // });
                             },
                           );
                         }),
@@ -230,16 +209,24 @@ class _ControlPageState extends State<ControlPage> {
               ),
               ElevatedButton(
                 onPressed: () {
-
-                  for (int i = 0; i < code.length; i++) {
-                    controleRobo.writeText(
-                        "${code[i].getComando()}:${code[i].getMultiplicador()}");
+                  try {
+                    for (int i = 0; i < code.length; i++) {
+                      controleRobo.writeText(
+                          "${code[i].getComando()}:${code[i].getMultiplicador()}");
+                    }
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Código enviado sucesso!')),
+                    );
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('Falha ao enviar os dados!')),
+                    );
                   }
                 },
                 child: const Text(
                   "Compilar",
-                  style: TextStyle(
-                      fontSize: 20), // Ajuste o tamanho conforme necessário
+                  style: TextStyle(fontSize: 20),
                 ),
               )
             ],

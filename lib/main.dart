@@ -6,16 +6,17 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:teste_ic/provider.dart';
+import 'package:teste_ic/utils/extra.dart';
 
 import 'homeScreen.dart';
 import 'levelsScreen.dart';
 
 void main() {
-
   runApp(
     ChangeNotifierProvider(
       create: (_) => ControleRobo(),
-      child: MyApp(),
+      child: const MyApp(),
+
     ),
   );
 }
@@ -28,7 +29,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -44,15 +44,27 @@ class _MyAppState extends State<MyApp> {
         // "/": (context) => const MyHomePage(title: "Tela inicial"),
         "/fases": (context) => const ScreenPage(),
         "/controles": (context) => const ControlPage(faseAtual: 0)
-        },
+      },
       title: 'Aplicativo IC',
-      navigatorObservers: [BluetoothAdapterStateObserver()],
+      navigatorObservers: [
+        BluetoothAdapterStateObserver(Provider.of<ControleRobo>(context))
+      ],
+
     );
   }
 }
 
 class BluetoothAdapterStateObserver extends NavigatorObserver {
+  late final ControleRobo controleRobo;
   StreamSubscription<BluetoothAdapterState>? _adapterStateSubscription;
+  StreamSubscription<BluetoothConnectionState>? _controleState;
+
+
+  BluetoothAdapterStateObserver(ControleRobo p) {
+    print(p.robo1.remoteId);
+    this.controleRobo = p;
+
+  }
 
   Future _requestBluetoothPermission() async {
     if (await Permission.bluetooth.isDenied ||
@@ -66,18 +78,48 @@ class BluetoothAdapterStateObserver extends NavigatorObserver {
     }
   }
 
+  void buildDisconnectAdivor(context){
+    showDialog(
+      context: context, // Substitua pelo contexto apropriado
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Dispositivo desconectado"),
+          actions: [
+            const Text("Aperte para reconectar"),
+            ElevatedButton(
+              onPressed: () {
+                controleRobo.robo1.connect().whenComplete((){
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Dispositivo conectado com sucesso!')),
+                  );
+                  Navigator.of(context).pop(); // Fecha o diálogo
+                });
+              },
+              child: const Text("Conectar"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   void didPush(Route route, Route? previousRoute) {
     super.didPush(route, previousRoute);
 
-    _adapterStateSubscription ??= FlutterBluePlus.adapterState.listen((state) {
+    _adapterStateSubscription ??= FlutterBluePlus.adapterState.listen((state) async {
       if (state != BluetoothAdapterState.on) {
         // navigator?.pop();
         _requestBluetoothPermission();
         FlutterBluePlus.turnOn();
       }
     });
+
+    _controleState ??= controleRobo.robo1.connectionState.listen((data){
+      if(data == BluetoothConnectionState.disconnected && controleRobo.scanDisconect){
+        print("Robo 1 desconectado");
+        buildDisconnectAdivor(route.navigator!.context);
+      }
+    });
   }
 }
-
-
