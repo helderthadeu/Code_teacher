@@ -4,6 +4,16 @@
 .dart_tool/
 .packages
 build/
+android/
+app_ic.iml
+linux/
+test/
+web/
+.idea/
+.metadata
+Code_teacher/
+analysis_options.yaml
+
 # If you're building an application, you may want to check-in your pubspec.lock
 pubspec.lock
 
@@ -25,3 +35,4 @@ doc/api/
 
 .flutter-plugins
 .flutter-plugins-dependencies
+
