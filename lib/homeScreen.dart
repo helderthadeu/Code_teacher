@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:provider/provider.dart';
-import 'package:teste_ic/provider.dart';
+import 'package:teste_ic/utils/provider.dart';
 
 import 'dart:convert';
 import 'dart:typed_data';
@@ -19,17 +19,16 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  // final controleRobo.getRobo1() = BluetoothDevice.fromId("E4:65:B8:DA:22:FA");
-  late final ControleRobo controleRobo;
+  late BluetoothDevice controlRobotHome;
 
   @override
-  void didChangeDependencies() {
-    controleRobo = Provider.of<ControleRobo>(context);
+  void didChangeDependencies() async{
+    controlRobotHome = context.watch<ControleRobo>().robo1;
     super.didChangeDependencies();
   }
 
   Widget botaoContinuar() {
-    if (controleRobo.robo1.isConnected) {
+    if (controlRobotHome.isConnected) {
       return ElevatedButton(
         onPressed: () {
           Navigator.pushNamed(context, "/fases");
@@ -42,16 +41,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     // controleRobo = Provider.of<ControleRobo>(context);
     return Scaffold(
@@ -61,18 +50,8 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             ElevatedButton(
               onPressed: () {
-                controleRobo.connectBluetooth().whenComplete((){
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Dispositivo conectado com sucesso!')),
-                  );
-                });
-                  Future.delayed(const Duration(milliseconds: 500)).whenComplete((){
-                    setState(() {
+                context.read<ControleRobo>().connectBluetooth(context);
 
-                    });
-                  // setState(() {});
-                  // setState(() {});
-                });
               },
               child: const Text('Sincronizar robôs'),
             ),

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:teste_ic/controlScreen.dart';
 import 'dart:async';
-import 'provider.dart';
+import 'utils/provider.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
@@ -13,7 +14,13 @@ class ScreenPage extends StatefulWidget {
   State<ScreenPage> createState() => _ScreenPageState();
 }
 
+
 class _ScreenPageState extends State<ScreenPage> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -24,14 +31,6 @@ class _ScreenPageState extends State<ScreenPage> {
         child: Scaffold(
             appBar: AppBar(
               centerTitle: false,
-              // bottom: PreferredSize(
-              //     preferredSize: const Size(20, 20),
-              //     child: BackButton(
-              //       onPressed: () async {
-              //         await Future.delayed(const Duration(milliseconds: 100));
-              //         Navigator.popAndPushNamed(context, "/");
-              //       },
-              //     )),
             ),
             body: Padding(
               padding: const EdgeInsets.all(10),
@@ -52,6 +51,13 @@ class _ScreenPageState extends State<ScreenPage> {
                       children: List.generate(3, (index) {
                         return MaterialButton(
                           onPressed: () {
+                            context.read<ControleRobo>().setFase(index+1);
+
+                            context.read<ControleRobo>().writeListText("currentPattern",context.read<ControleRobo>().fase.padraoMovimento,"@",context).whenComplete((){
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Fase carregada com sucesso!')),
+                              );
+                            });
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(

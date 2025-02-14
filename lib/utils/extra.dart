@@ -72,4 +72,7 @@ class Mnemonico {
   String getMultiplicador() {
     return this._multiplicador;
   }
+  String getFullCommand(){
+    return "$_comando:$_multiplicador";
+  }
 }
