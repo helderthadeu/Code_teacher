@@ -1,24 +1,15 @@
-import 'dart:async';
-
-import 'package:flutter/material.dart';
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-import 'package:provider/provider.dart';
-import 'package:teste_ic/utils/provider.dart';
-
-import 'dart:convert';
-import 'dart:typed_data';
+import 'package:teste_ic/commons.dart';
 
 // Endereço MAC de TESTE E4:65:B8:DA:22:FA
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
+class MyHomeScreen extends StatefulWidget {
+  const MyHomeScreen({super.key, required this.title});
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<MyHomeScreen> createState() => _MyHomeScreenState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomeScreenState extends State<MyHomeScreen> {
   late BluetoothDevice controlRobotHome;
 
   @override
@@ -27,13 +18,13 @@ class _MyHomePageState extends State<MyHomePage> {
     super.didChangeDependencies();
   }
 
-  Widget botaoContinuar() {
+  Widget startButton() {
     if (controlRobotHome.isConnected) {
       return ElevatedButton(
         onPressed: () {
-          Navigator.pushNamed(context, "/fases");
+          Navigator.pushNamed(context, "/levels");
         },
-        child: const Text('Continuar'),
+        child: const Text('Start'),
       );
     } else {
       return Container();
@@ -42,7 +33,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // controleRobo = Provider.of<ControleRobo>(context);
+
     return Scaffold(
       body: Center(
         child: Column(
@@ -51,11 +42,10 @@ class _MyHomePageState extends State<MyHomePage> {
             ElevatedButton(
               onPressed: () {
                 context.read<ControleRobo>().connectBluetooth(context);
-
               },
-              child: const Text('Sincronizar robôs'),
+              child: const Text('Synchronize robot'),
             ),
-            botaoContinuar()
+            startButton()
           ],
         ),
       ),

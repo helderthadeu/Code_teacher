@@ -1,3 +1,19 @@
+import 'package:teste_ic/commons.dart';
+
+class LevelDetails {
+  late final String name;
+  late final int levelCode;
+  late final List<String> padraoMovimento;
+  late final dica;
+
+  LevelDetails(int cod) {
+    this.levelCode = cod;
+    this.padraoMovimento = padroesMovimentos()[levelCode]!;
+    this.dica = dicas()[levelCode];
+  }
+}
+
+
 Map<int, List<String>> padroesMovimentos() {
   return {
     1: ["1",
@@ -17,5 +33,3 @@ Map<int, String> dicas() {
     3: "Vai e vem",
   };
 }
-
-

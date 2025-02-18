@@ -1,24 +1,7 @@
-import 'dart:async';
-
-import 'package:flutter/material.dart';
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-import 'detalhesFase.dart';
-
-class DetalhesFase {
-  late final String nome;
-  late final int codFase;
-  late final List<String> padraoMovimento;
-  late final dica;
-
-  DetalhesFase(int cod) {
-    this.codFase = cod;
-    this.padraoMovimento = padroesMovimentos()[codFase]!;
-    this.dica = dicas()[codFase];
-  }
-}
+import 'package:teste_ic/commons.dart';
 
 class ControleRobo with ChangeNotifier {
-  late DetalhesFase fase;
+  late LevelDetails level;
   List<BluetoothService> services = [];
   BluetoothCharacteristic? characteristicToSend;
   BluetoothCharacteristic? characteristicToReceive;
@@ -26,8 +9,8 @@ class ControleRobo with ChangeNotifier {
   bool scanDisconect = false;
   final BluetoothDevice robo1 = BluetoothDevice.fromId("E4:65:B8:DA:22:FA");
 
-  void setFase(int cod) {
-    fase = DetalhesFase(cod);
+  void setLevel(int cod) {
+    level = LevelDetails(cod);
     notifyListeners();
   }
 
@@ -36,15 +19,13 @@ class ControleRobo with ChangeNotifier {
       await characteristicToSend?.write(indicador.codeUnits + text.codeUnits);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Falha ao enviar texto!')),
+        const SnackBar(content: Text('Send text failed!')),
       );
       throw e;
     }
-    print("Data enviado ${text.codeUnits}");
   }
 
-  Future writeListText(String indicador, List<String> text, String caracterSep,
-      BuildContext context) async {
+  Future writeListText(String indicador, List<String> text, String caracterSep, BuildContext context) async {
     text.insert(0, indicador);
     String code = text.join(caracterSep).toString();
 
@@ -52,11 +33,11 @@ class ControleRobo with ChangeNotifier {
       await characteristicToSend?.write(code.codeUnits);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Falha ao enviar texto!')),
+        const SnackBar(content: Text('Send text failed!')),
       );
       throw e;
     }
-    print("Data enviado ${code.codeUnits}");
+
   }
 
   Future getServices(BuildContext context) async {
@@ -64,7 +45,7 @@ class ControleRobo with ChangeNotifier {
       await robo1.clearGattCache();
       services = await robo1.discoverServices(timeout: 5000);
     } catch (e) {
-      print("Erro encontrado: " + e.toString());
+      print("Error: " + e.toString());
     }
     for (BluetoothService service in services) {
       for (BluetoothCharacteristic c in service.characteristics) {
@@ -77,7 +58,7 @@ class ControleRobo with ChangeNotifier {
           characteristicToReceive = c;
           await characteristicToReceive!.setNotifyValue(true);
 
-          print("Encontrou o que recebe");
+
 
           characteristicToReceive!.onValueReceived.listen((data) {
             print(String.fromCharCodes(data));
@@ -90,7 +71,7 @@ class ControleRobo with ChangeNotifier {
     }
 
     if (characteristicToSend == null) {
-      print("Erro: Characteristic não encontrada.");
+      print("Error: Characteristic did not found.");
     }
     notifyListeners();
   }
@@ -98,12 +79,12 @@ class ControleRobo with ChangeNotifier {
   Future<void> connectBluetooth(BuildContext context) async {
     try {
       await robo1.connect(timeout: const Duration(seconds: 5)).whenComplete(() {
-        print("Conectado");
+
         scanDisconect = true;
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Falha ao enviar texto!')),
+        const SnackBar(content: Text('Send text failed!')),
       );
     }
 
@@ -113,12 +94,15 @@ class ControleRobo with ChangeNotifier {
   }
 
   receivedMessage(String message, BuildContext context) {
-    if (message == "Robos encontrados") {
-      showDialog(context: context, builder: (context) {
-        return AlertDialog(
-          title: Text("Robos encontrados"),
-        );
-      },);
+    if (message == "Robot found") {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return const AlertDialog(
+            title: Text("Robot found!"),
+          );
+        },
+      );
     }
   }
 }

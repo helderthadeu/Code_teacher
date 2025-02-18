@@ -1,15 +1,6 @@
-import 'dart:async';
+import 'commons.dart';
 
-import 'package:flutter/material.dart';
-import 'package:teste_ic/controlScreen.dart';
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:provider/provider.dart';
-import 'package:teste_ic/utils/provider.dart';
-import 'package:teste_ic/utils/extra.dart';
 
-import 'homeScreen.dart';
-import 'levelsScreen.dart';
 
 void main() {
   runApp(
@@ -37,11 +28,9 @@ class _MyAppState extends State<MyApp> {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Aplicativo IC'),
-      // home: const ControlPage(faseAtual: 0),
+      home: const MyHomeScreen(title: 'Aplicativo IC'),
       routes: {
-        // "/": (context) => const MyHomePage(title: "Tela inicial"),
-        "/fases": (context) => const ScreenPage(),
+        "/levels": (context) => const ScreenPage(),
         "/controles": (context) => const ControlPage(faseAtual: 0)
       },
       title: 'Aplicativo IC',
@@ -129,14 +118,11 @@ class BluetoothAdapterStateObserver extends NavigatorObserver {
     });
 
     _controleState ??= route.navigator!.context.read<ControleRobo>().robo1.connectionState.listen((data) {});
-
     _controleState?.onData((data) {
-      print("Esperando..");
       if (data == BluetoothConnectionState.disconnected && route.navigator != null &&
           route.navigator!.mounted &&
           route.navigator!.context.read<ControleRobo>().previousBondState == BluetoothBondState.bonded &&
           !Navigator.canPop(route.navigator!.context)) {
-        print("Robo 1 desconectado");
         buildDisconnectAdivor(route.navigator!.context);
       }
       Future.delayed(const Duration(seconds: 1));

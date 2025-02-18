@@ -1,8 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:teste_ic/utils/provider.dart';
 
-import 'utils/extra.dart';
+import 'package:teste_ic/commons.dart';
 
 class ControlPage extends StatefulWidget {
   const ControlPage({super.key, required this.faseAtual});
@@ -15,29 +12,29 @@ class ControlPage extends StatefulWidget {
 
 class _ControlPageState extends State<ControlPage> {
   final int tamCode = 24;
-List<Mnemonico> code = List<Mnemonico>.generate(24, (index) => Mnemonico("nada", "nada"), growable: true);
+List<Mnemonico> code = List<Mnemonico>.generate(24, (index) => Mnemonico("none", "none"), growable: true);
 
   @override
   void initState() {
     super.initState();
   }
 
-  List<Widget> _draggedContainers =  (List.generate(24, (index) => buildContainer(Colors.white, Icons.circle_outlined, "nada")));
+  List<Widget> _draggedContainers =  (List.generate(24, (index) => buildContainer(Colors.white, Icons.circle_outlined, "none")));
 
-  List<Widget> _subDraggeds = List.generate(24, (index) => buildContainer(Colors.black12, Icons.add, "nada"));
+  List<Widget> _subDraggeds = List.generate(24, (index) => buildContainer(Colors.black12, Icons.add, "none"));
 
   @override
   Widget build(BuildContext context) {
     return PopScope(
       onPopInvokedWithResult: (tes, te) async {
         await Future.delayed(const Duration(milliseconds: 100));
-        Navigator.pushNamed(context, "/fases");
+        Navigator.pushNamed(context, "/levels");
       },
       child: Scaffold(
         extendBody: true,
         appBar: AppBar(
           title: Text(
-            "FASE ATUAL: ${widget.faseAtual}",
+            "Level ${widget.faseAtual}",
             textAlign: TextAlign.center,
           ),
           centerTitle: true,
@@ -71,12 +68,12 @@ List<Mnemonico> code = List<Mnemonico>.generate(24, (index) => Mnemonico("nada",
                                   String temp =
                                       details.data.key.toString().toString().replaceAll("[<'", "").replaceAll("'>]", "");
 
-                                  if ((temp == "xTwo" || temp == "xThree") && code[index].getComando() == "nada") {
+                                  if ((temp == "xTwo" || temp == "xThree") && code[index].getComando() == "none") {
                                     return false;
                                   }
                                   if (index == 0) {
                                     return true;
-                                  } else if (code[index - 1].getComando() != "nada") {
+                                  } else if (code[index - 1].getComando() != "none") {
                                     return true;
                                   } else {
                                     return false;
@@ -91,7 +88,7 @@ List<Mnemonico> code = List<Mnemonico>.generate(24, (index) => Mnemonico("nada",
                               ),
                               DragTarget<Widget>(
                                 builder: (context, candidateData, rejectedData) {
-                                  Widget internoTemp = buildContainer(Colors.black12, Icons.add, "Teste");
+
 
                                   return Container(width: 50, height: 50, color: Colors.grey[300], child: _subDraggeds[index]);
                                 },
@@ -105,7 +102,7 @@ List<Mnemonico> code = List<Mnemonico>.generate(24, (index) => Mnemonico("nada",
                                       .replaceAll("[<'", "")
                                       .replaceAll("'>]", "");
 
-                                  if (tempPrev == "nada") {
+                                  if (tempPrev == "none") {
                                     return false;
                                   }
                                   if (temp == "xTwo" || temp == "xThree") {
@@ -134,10 +131,10 @@ List<Mnemonico> code = List<Mnemonico>.generate(24, (index) => Mnemonico("nada",
                     runSpacing: 20.0,
                     direction: Axis.horizontal,
                     children: [
-                      buildDraggable(Colors.green, Icons.arrow_upward_rounded, 1, "frente", true),
-                      buildDraggable(Colors.green, Icons.arrow_forward_rounded, 2, "direita", true),
-                      buildDraggable(Colors.green, Icons.arrow_back_rounded, 3, "esquerda", true),
-                      buildDraggable(Colors.green, Icons.arrow_downward_rounded, 4, "atras", true),
+                      buildDraggable(Colors.green, Icons.arrow_upward_rounded, 1, "ahead", true),
+                      buildDraggable(Colors.green, Icons.arrow_forward_rounded, 2, "right", true),
+                      buildDraggable(Colors.green, Icons.arrow_back_rounded, 3, "left", true),
+                      buildDraggable(Colors.green, Icons.arrow_downward_rounded, 4, "back", true),
                       buildDraggable(Colors.blue, Icons.two_k_outlined, 6, "xTwo", false),
                       buildDraggable(Colors.blue, Icons.three_k_outlined, 7, "xThree", false),
                     ],
@@ -151,7 +148,7 @@ List<Mnemonico> code = List<Mnemonico>.generate(24, (index) => Mnemonico("nada",
                     onPressed: () async {
                       List<String> temp = [];
                       code.forEach((e) {
-                        if (!e.getFullCommand().startsWith("nada")) {
+                        if (!e.getFullCommand().startsWith("none")) {
                           temp.add(e.getFullCommand());
                         }
                       });
@@ -172,9 +169,9 @@ List<Mnemonico> code = List<Mnemonico>.generate(24, (index) => Mnemonico("nada",
                     _draggedContainers.clear();
                     _subDraggeds.clear();
                     code.clear();
-                    _draggedContainers =  (List.generate(24, (index) => buildContainer(Colors.white, Icons.circle_outlined, "nada")));
-                    _subDraggeds = List.generate(24, (index) => buildContainer(Colors.black12, Icons.add, "nada"));
-                    code = List<Mnemonico>.generate(24, (index) => Mnemonico("nada", "nada"), growable: true);
+                    _draggedContainers =  (List.generate(24, (index) => buildContainer(Colors.white, Icons.circle_outlined, "none")));
+                    _subDraggeds = List.generate(24, (index) => buildContainer(Colors.black12, Icons.add, "none"));
+                    code = List<Mnemonico>.generate(24, (index) => Mnemonico("none", "none"), growable: true);
                     setState(() {
 
                     });

@@ -1,11 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:teste_ic/controlScreen.dart';
-import 'dart:async';
-import 'utils/provider.dart';
-
-import 'package:flutter/material.dart';
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:teste_ic/commons.dart';
 
 class ScreenPage extends StatefulWidget {
   const ScreenPage({super.key});
@@ -51,9 +44,9 @@ class _ScreenPageState extends State<ScreenPage> {
                       children: List.generate(3, (index) {
                         return MaterialButton(
                           onPressed: () {
-                            context.read<ControleRobo>().setFase(index+1);
+                            context.read<ControleRobo>().setLevel(index+1);
 
-                            context.read<ControleRobo>().writeListText("currentPattern",context.read<ControleRobo>().fase.padraoMovimento,"@",context).whenComplete((){
+                            context.read<ControleRobo>().writeListText("currentPattern",context.read<ControleRobo>().level.padraoMovimento,"@",context).whenComplete((){
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(content: Text('Fase carregada com sucesso!')),
                               );

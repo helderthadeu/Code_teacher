@@ -1,5 +1,5 @@
 
-import 'utils.dart';
+import 'package:teste_ic/commons.dart';
 
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
@@ -52,8 +52,8 @@ extension Extra on BluetoothDevice {
 }
 
 class Mnemonico {
-  String _comando = "nada";
-  String _multiplicador = "nada";
+  String _comando = "none";
+  String _multiplicador = "none";
 
   Mnemonico(this._comando, this._multiplicador);
 

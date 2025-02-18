@@ -39,8 +39,6 @@ class DragTargetEspecial {
     );
   }
 
-
-
 }
 
 Widget buildDraggable(Color color, IconData icon, int codigo, String comando,
